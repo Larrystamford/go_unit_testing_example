@@ -8,3 +8,11 @@ The main focus is the RetrievePassesResults() function. By converting it to a me
 ### Controller
 The controller simulates manipulating and creating logic for the results that were retrieved from the database.
 To ensure that unit testing can be done on the controller, an interface is passed as a parameter to the functions that are created in this folder. Hence, this allows us to customise the child object during testing. 
+
+### Importing GoConvey
+$ go get github.com/smartystreets/goconvey
+$ $GOPATH/bin/goconvey
+
+### Using testing coverage
+$ go test -coverprofile=coverage.out
+$ go tool cover -html=coverage.out
