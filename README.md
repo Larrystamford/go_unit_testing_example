@@ -10,9 +10,10 @@ The controller simulates manipulating and creating logic for the results that we
 To ensure that unit testing can be done on the controller, an interface is passed as a parameter to the functions that are created in this folder. Hence, this allows us to customise the child object during testing. 
 
 ### Importing GoConvey
-$ go get github.com/smartystreets/goconvey
-$ $GOPATH/bin/goconvey
+$ go get github.com/smartystreets/goconvey <br />
+$ $GOPATH/bin/goconvey <br />
 
 ### Using testing coverage
-$ go test -coverprofile=coverage.out
-$ go tool cover -html=coverage.out
+$ go test -coverprofile=coverage.out  <br />
+$ go tool cover -html=coverage.out <br />
+ 
