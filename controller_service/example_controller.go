@@ -22,3 +22,7 @@ func DeterminePass(results Results) (bool) {
 	
 	return false
 }
+
+
+
+// more logic functions can be written below here, using the interface as an argument
