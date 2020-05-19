@@ -24,7 +24,7 @@ func TestDeterminePass(t *testing.T) {
 	Convey("Given a result struct", t, func() {
 
 		Convey("It should return true if the result is more than or equals to 0.5", func() {
-			mr := mockResults{99,100}
+			mr := mockResults{90,100}
 			So(DeterminePass(mr), ShouldEqual, true )
 		})
 

@@ -11,7 +11,7 @@ import (
 
 func goDotEnvVariable(key string) string {
   // load .env file
-  err := godotenv.Load(".env")
+  err := godotenv.Load(os.ExpandEnv("$GOPATH/src/learningTesting/.env"))
   if err != nil {
     log.Fatalf("Error loading .env file")
   }
@@ -34,14 +34,11 @@ type ResultsDB struct {
 	Result string `json:"Result"`
 }
 
-
-
-// initialise database
-func init() {
+func connectToDb(){
 	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s "+
-    "password=%s dbname=%s sslmode=disable",
-    host, port, user, password, dbname)
-    
+	"password=%s dbname=%s sslmode=disable",
+	host, port, user, password, dbname)
+	
 	var err error
 	db, err = sql.Open("postgres", psqlInfo)
 	if err != nil {
@@ -56,14 +53,20 @@ func init() {
 	fmt.Println("You connected to your database.")
 }
 
+// initialise database
+func init() {
+	connectToDb()
+}
+
 // SELECT all results from table and return results as list
-func getAllResults() ([]ResultsDB){
+func getAllResults(db *sql.DB) ([]ResultsDB, float64, float64){
 	rows, err := db.Query("SELECT * FROM FoodTests;")
 	if err != nil {
 		panic(err)
 	}
 	defer rows.Close()
 
+	var passes, total float64 = 0,0
 	resultsList := make([]ResultsDB, 0)
 	for rows.Next() {
 		eachResult := ResultsDB{}
@@ -71,12 +74,16 @@ func getAllResults() ([]ResultsDB){
 		if err != nil {
 			panic(err)
 		}
+		if eachResult.Result == "pass"{
+			passes++
+		}
+		total++
 		resultsList = append(resultsList, eachResult)
 	}
 	if err = rows.Err(); err != nil {
 		panic(err)
 	}
-	return resultsList
+	return resultsList, passes, total
 }
 
 
@@ -89,23 +96,17 @@ type ResultStruct struct {
 }
 
 
+// Decided that the method will only function as a outward facing method to allow
+// the other packages to use it and override it
+// Hence, testing is not required for this function (I think)
+
 func (rs ResultStruct) RetrievePassesResults() (float64, float64){
 	// return the total number of passes and database table length
 
 	fmt.Println("Database is queried.")
-	resultsList := getAllResults()
-	
+	_,passes,total := getAllResults(db)
 
-	for _, eachRes := range resultsList {
-		if eachRes.Result == "pass"{
-			rs.passes++
-		}
-		rs.total++
-	}
-	fmt.Printf("Test Results: %.0f / %.0f tests passed.\n", rs.passes, 	rs.total)
-	return rs.passes, rs.total
+	fmt.Printf("Test Results: %.0f / %.0f tests passed.\n", passes, 	total)
+	return passes, total
 }
-
-
-
 
